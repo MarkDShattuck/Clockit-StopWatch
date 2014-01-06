@@ -1,0 +1,64 @@
+ Clockit Stop Watch
+ Clockit KIT-10930(https://www.sparkfun.com/products/10930)
+
+ Description:
+ Convert Clockit into a stop watch. 
+ NEW firmware code for the Sparkfun Clockit Alarm Clock Kit 
+ Clockit KIT-10930(https://www.sparkfun.com/products/10930).
+ 
+ Functions: 
+ Display => Elapsed time in seconds with floating decimal
+            Adjustable brightness. 
+ Timer   => Reset, Start, Stop, Re-Start, [Lap]
+ 
+ Operation:
+ SNOOZE => RESET
+ UP     => START
+ DOWN   => STOP
+
+ Hold UP + DOWN => RESTART
+ Repeated SNOOZE increase/decrease [Alarm ON/OFF] brightness
+ 
+ [Lap] NYI (Not Yet Implemented]
+ 
+ Hardware:
+ 4-digit 7-segment display and ATmega328P micro-controller 
+ 
+ To use:
+ 1) Build Clockit kit.  
+ 2) Add optional 6-pin programming header (https://www.sparkfun.com/products/116)
+ 3) Install drivers for AVR programmer like: (https://www.sparkfun.com/products/9825)
+ 4) Install WinAVR or similar (http://sourceforge.net/projects/winavr/)
+ 5) Check programming chain: avrdude -c usbtiny -p m328p
+ 6) Download these files: https://github.com/MarkDShattuck/Clockit-StopWatch
+ 7) Compile and install new software: make program 
+ 
+ Detailed Description:
+ Basic stop watch using the Atmel 8-bit ATmega328P micro-controller and a common 
+ anode 7-segment 4-digit LED panel.  Hardware is from SparkFun Clockit KIT-10930 
+ (https://www.sparkfun.com/products/10930). The timebase is set by an external
+ 16MHz crystal oscillator.  Three push buttons (UP/DOWN/SNOOZE) and one switch 
+ (ALARM ON/OFF) control operations.  Elaped time is indicated in seconds using
+ a floating decimal point which moves to the right as the time increases. For 
+ 0.000 - 9.999 seconds 1/1000 of seconds are shown.  For 10.00 to 99.99 seconds
+ hundredths are shown etc.  A piezo-electric buzzer is not used. The stopwatch
+ operates in three modes RESET, RUN, STOP.  In RESET mode the elapsed time is 
+ 0.000s and the counter is not running. RESET is entered by pressing  SNOOZE 
+ during STOP or RUN mode.  RUN is entered by pressing UP during RESET.  In RUN 
+ mode the counter is counting and the elapsed time is displayed. In STOP mode
+ the counter is not running and the elapsed time is displayed.  STOP is entered 
+ by pressing DOWN during RUN mode.  In STOP mode holding UP and pressing DOWN 
+ will restart the timer and change from STOP to RUN mode.  To change the 
+ display brightness press SNOOZE during RESET mode.  The display will get
+ brighter if the Alarm switch is ON and dimmer if the Alarm switch is OFF.
+
+ Theory of Operation: (See stopwatch.c)
+
+ revision history:
+ <stopwatch.c> Mark D. Shattuck 12/28/2013
+ 12/28/2013 Mark D. Shattuck <mds> timer.c
+            Basic stopwatch using Sparkfun Clockit 4-digit 7-segment display
+            000 mds Complete re-write of the Spark Fun 
+                    03/04/09 [Nathan Seidle] 
+                    02/24/11 [Jim Lindblom]
+                    original alarm clock software
