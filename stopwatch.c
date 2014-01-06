@@ -10,7 +10,13 @@
                     03/04/09 [Nathan Seidle] 
                     02/24/11 [Jim Lindblom]
                     original alarm clock software
-    
+ 01/06/2014 001 mds Corrected slow timing bug:
+                    Frequency in CTC mod = FOSC/(N*(1+ICRx)) where N is 
+                    prescale value (see section 16.9.2 in data sheet) for
+                    N=64 and ICR=250 the 1ms clock was taking 1.004ms or
+                    an extra 14.4s per hour. To correct set N to 1 and 
+                    ICR1=15999.  Using small N allows for more correction
+                    resolution if needed. Corrected description as well.
  
  Description:
  Convert Clockit into a stop watch. 
@@ -94,10 +100,11 @@
     global variables digit, digit_val, and dp, commented section of ioinit() and 
     the associated defines.
  3) The core timing for the elapsed time is handled by the 16-bit Timer1. In CTC 
-    mode (WGM mode 12) the timer counts up to ICR1=250 and generates a capture 
-    (TIMER1_CAPT_vect) interrupt.  The clock frequency is 16MHz.  The pre-scaler 
-    is set to 64, so each count is 64/16=4us.  Therefore, 1ms/4us = 250 counts 
-    each ms (mili-second). If the system is in state==RUN, then Timer1's ISR 
+    mode (WGM mode 12) the timer counts up to ICR1=15999 and generates a capture 
+    (TIMER1_CAPT_vect) interrupt and then clears the count on the clk.  Thus the
+	cycle is ICR1+1 clk cycles long. The clock frequency is 16MHz.  The pre-scaler 
+    is set to 1, so each count is 1/16=62.5ns.  Therefore, 1ms/62.5ns = 16000 = ICR1+1
+	counts each ms (mili-second). If the system is in state==RUN, then Timer1's ISR 
     updates a global volatile MSDIG=13 element array mils[MSDIG] otherwise it returns.  
     mils contains up to MSDIG digits of the elapsed time. mils[0] contains the 
     1/1000th place, mils[1] contains the 1/100th place up to the 10^(MSDIG-4) place. 
@@ -446,11 +453,11 @@ void ioinit(void){
     //*** Display Code end
     
     //Init Timer1 for ms counting CTC mode
-    //Set pre-scalar to clk/64 @ 16MHz/64 = 250kHz => 4us per tick
-    TCCR1B |= _BV(CS10)|_BV(CS11); 
+    //Set pre-scalar to clk/1 @ 16MHz/1 = 16MHz => 62.5ns per tick
+    TCCR1B |= _BV(CS10); 
     TCCR1B |= _BV(WGM12)|_BV(WGM13);  // Mode 12 CTC mode
     TIMSK1 |= _BV(ICIE1);             //Enable interrupts
-    ICR1 = 250;                       // SET TOP to 250*4us=1 ms
+    ICR1 = 15999;                       // SET TOP to (15999+1)*62.5ns=1 ms
 
     PCICR |=_BV(PCIE0);                             //Set PCINT0-7
     PCMSK0 |=_BV(PCINT5)|_BV(PCINT4)|_BV(PCINT0);   //Activate 0,4,5 ALARM,STOP,START

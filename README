@@ -62,3 +62,10 @@
                     03/04/09 [Nathan Seidle] 
                     02/24/11 [Jim Lindblom]
                     original alarm clock software
+ 01/06/2014 001 mds Corrected slow timing bug:
+                    Frequency in CTC mod = FOSC/(N*(1+ICRx)) where N is 
+                    prescale value (see section 16.9.2 in data sheet) for
+                    N=64 and ICR=250 the 1ms clock was taking 1.004ms or
+                    an extra 14.4s per hour. To correct set N to 1 and 
+                    ICR1=15999.  Using small N allows for more correction
+                    resolution if needed. Corrected description as well.
