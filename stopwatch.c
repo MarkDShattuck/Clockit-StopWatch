@@ -367,7 +367,7 @@ ISR (TIMER1_CAPT_vect) {
 
 ISR(PCINT0_vect){ // START, STOP, ALARM change state
     
-    if(bit_is_set(PINB,BUT_START)){
+    if(bit_is_clear(PINB,BUT_START)){
         digit_val[4] &=~(_BV(0));
     }else{
         digit_val[4] |=_BV(0);
@@ -376,7 +376,7 @@ ISR(PCINT0_vect){ // START, STOP, ALARM change state
         }
     }
 
-    if(bit_is_set(PINB,BUT_STOP)){
+    if(bit_is_clear(PINB,BUT_STOP)){
         digit_val[4] &=~(_BV(1));
     }else{
         digit_val[4] |=_BV(1);
@@ -385,11 +385,12 @@ ISR(PCINT0_vect){ // START, STOP, ALARM change state
         }
     }
 
-    if(bit_is_clear(PINB,BUT_START) && bit_is_clear(PINB,BUT_STOP)){
+  /*  if(bit_is_clear(PINB,BUT_START) && bit_is_clear(PINB,BUT_STOP)){
         if(state==STOP){
             state=RUN;
         }
     }
+	*/
 
 }
 
